@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	VERSION = "2.5.1"
+	VERSION = "2.5.2"
 )
 
 func putAsciiArt(s string) {
@@ -73,7 +73,7 @@ func printOneliner2() {
 	textClr := color.New(color.FgHiBlack)
 	red := color.New(color.FgRed)
 	white := color.New(color.FgWhite)
-	txt := textClr.Sprintf("                   no ") + red.Sprintf("nginx") + white.Sprintf(" - ") + textClr.Sprintf("Enjoy ") + red.Sprintf("evil")
+	txt := textClr.Sprintf("                   Evil ") + red.Sprintf("nginx") + white.Sprintf(" - ") + textClr.Sprintf("Enjoy ") + red.Sprintf("your life")
 	fmt.Fprintf(color.Output, "%s", txt)
 }
 
