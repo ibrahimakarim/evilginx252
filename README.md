@@ -62,16 +62,32 @@ You can either use a [precompiled binary package](https://github.com/kgretzky/ev
 You will need an external server where you'll host your **evilginx2** installation. I personally recommend Digital Ocean and if you follow my referral link, you will [get an extra $10 to spend on servers for free](https://m.do.co/c/50338abc7ffe).
 
 Evilginx runs very well on the most basic Debian 8 VPS.
-
-#### Installing from source
+#### Installing go 
 
 In order to compile from source, make sure you have installed **GO** of version at least **1.14.0** (get it from [here](https://golang.org/doc/install)).
+1.install
+```
+wget https://go.dev/dl/go1.<VERSION_NUMBER>.linux-amd64.tar.gz
+```
+eg. 
+```
+wget https://go.dev/dl/go1.19.3.linux-amd64.tar.gz
+```
+2.Go install.
+```
+$ rm -rf /usr/local/go && tar -C /usr/local -xzf go1.19.3.linux-amd64.tar.gz
+$ nano ~/.profile
+	export PATH=$PATH:/usr/local/go/bin
+$ source ~/.profile
+```
+
+#### Installing from source
 
 When you have GO installed, type in the following:
 
 ```
 sudo apt-get -y install git make
-git clone https://github.com/bigherocenter/evilginx2-update.git
+git clone https://github.com/bigherocenter/evilginx252.git
 cd evilginx2
 make
 ```
