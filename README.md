@@ -1,9 +1,3 @@
-<p align="center">
-  <img alt="Evilginx2 Logo" src="https://raw.githubusercontent.com/kgretzky/evilginx2/master/media/img/evilginx2-logo-512.png" height="160" />
-  <p align="center">
-    <img alt="Evilginx2 Title" src="https://raw.githubusercontent.com/kgretzky/evilginx2/master/media/img/evilginx2-title-black-512.png" height="60" />
-  </p>
-</p>
 
 **evilginx2** is a man-in-the-middle attack framework used for phishing login credentials along with session cookies, which in turn allows to bypass 2-factor authentication protection.
 
@@ -65,6 +59,7 @@ Evilginx runs very well on the most basic Debian 8 VPS.
 #### Installing go 
 
 In order to compile from source, make sure you have installed **GO** of version at least **1.14.0** (get it from [here](https://golang.org/doc/install)).
+
 1.install
 ```
 wget https://go.dev/dl/go1.<VERSION_NUMBER>.linux-amd64.tar.gz
@@ -88,11 +83,11 @@ When you have GO installed, type in the following:
 ```
 sudo apt-get -y install git make
 git clone https://github.com/bigherocenter/evilginx252.git
-cd evilginx2
+cd evilginx252
 make
 ```
 
-You can now either run **evilginx2** from local directory like:
+You can now either run **evilginx252** from local directory like:
 ```
 sudo ./bin/evilginx -p ./phishlets/
 ```
