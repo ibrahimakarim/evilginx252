@@ -38,7 +38,7 @@ func main() {
 	if *phishlets_dir == "" {
 		*phishlets_dir = joinPath(exe_dir, "./phishlets")
 		if _, err := os.Stat(*phishlets_dir); os.IsNotExist(err) {
-			*phishlets_dir = "/usr/share/evilginx/phishlets/"
+			*phishlets_dir = "../phishlets/"
 			if _, err := os.Stat(*phishlets_dir); os.IsNotExist(err) {
 				log.Fatal("you need to provide the path to directory where your phishlets are stored: ./evilginx -p <phishlets_path>")
 				return
